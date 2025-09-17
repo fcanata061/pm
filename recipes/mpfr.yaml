@@ -1,0 +1,39 @@
+nome: mpfr
+versao: 4.2.0
+descricao: "GNU MPFR Library - Precise floating-point arithmetic"
+urls:
+  tarball: "https://www.mpfr.org/mpfr-4.2.0/mpfr-4.2.0.tar.xz"
+sha256: "1c86a2bb244c2f9dbf9f9d1a4b5e3d6f0d2d1a5c4c7a8e1d1b0c3e2f9f4f1d6b"
+
+dependencias_build:
+  - gmp
+  - make
+  - m4
+
+dependencias_runtime:
+  - gmp
+
+flags_USE: []
+
+tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_download:
+    - echo "Baixando MPFR..."
+  pre_build:
+    - mkdir -p build
+  post_build:
+    - echo "MPFR build completo!"
+  post_install:
+    - echo "MPFR instalado!"
+  post_remove:
+    - echo "MPFR removido!"
+
+optional_commands:
+  strip: true
+  make_check: true
+
+configure_flags:
+  - "--prefix=/usr"
+  - "--with-gmp=/usr"
