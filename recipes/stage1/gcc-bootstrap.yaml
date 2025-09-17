@@ -1,0 +1,28 @@
+nome: gcc-bootstrap
+versao: 13.2.0
+descricao: "GCC bootstrap compiler"
+urls:
+  tarball: "https://ftp.gnu.org/gnu/gcc/gcc-13.2.0/gcc-13.2.0.tar.xz"
+sha256: "43e95b7d78f1d3a5a0f9153eafc2340c28b7a7fdf9f543b1b4b403eac0a1d2c3"
+
+dependencias_build:
+  - gmp
+  - mpfr
+  - mpc
+  - isl
+  - binutils
+  - make
+
+dependencias_runtime:
+  - glibc
+
+flags_USE:
+  - c
+
+tipo_build: autotools
+sandbox: true
+
+configure_flags:
+  - "--prefix=/tools"
+  - "--enable-languages=c"
+  - "--disable-multilib"
