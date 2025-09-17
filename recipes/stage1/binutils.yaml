@@ -17,4 +17,8 @@ hooks:
   pre_build:
     - mkdir -p build
   post_build:
-    - echo "Binutils build concluído!"
+    - echo "Binutils build completo!"
+  post_install:
+    - echo "Binutils instalado!"
+  post_remove:
+    - echo "Binutils removido!"
