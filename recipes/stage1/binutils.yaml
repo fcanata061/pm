@@ -1,6 +1,6 @@
 nome: binutils
 versao: 2.42
-descricao: "GNU Binutils - assembler, linker, objdump"
+descricao: "GNU Binutils"
 urls:
   tarball: "https://ftp.gnu.org/gnu/binutils/binutils-2.42.tar.xz"
 sha256: "<sha256-binutils>"
@@ -16,9 +16,16 @@ sandbox: true
 hooks:
   pre_build:
     - mkdir -p build
+    - cd build
+    - tar -xf ../binutils-2.42.tar.xz
   post_build:
     - echo "Binutils build completo!"
   post_install:
     - echo "Binutils instalado!"
   post_remove:
     - echo "Binutils removido!"
+
+configure_flags:
+  - "--prefix=/tools"
+  - "--disable-multilib"
+  - "--enable-64-bit-bfd"
