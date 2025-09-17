@@ -1,0 +1,34 @@
+nome: mpfr
+versao: 4.2.0
+descricao: "GNU MPFR Library"
+urls:
+  tarball: "https://www.mpfr.org/mpfr-4.2.0/mpfr-4.2.0.tar.xz"
+sha256: "<sha256-mpfr>"
+
+dependencias_build:
+  - gmp
+  - make
+  - m4
+
+dependencias_runtime:
+  - gmp
+
+tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_build:
+    - mkdir -p build
+    - cd build
+    - tar -xf ../mpfr-4.2.0.tar.xz
+    - mv -v ../mpfr-4.2.0 ../mpfr
+  post_build:
+    - echo "MPFR build completo!"
+  post_install:
+    - echo "MPFR instalado!"
+  post_remove:
+    - echo "MPFR removido!"
+
+configure_flags:
+  - "--prefix=/tools"
+  - "--with-gmp=/tools"
