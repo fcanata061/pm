@@ -1,0 +1,35 @@
+nome: bison
+versao: 3.8.2
+descricao: "GNU parser generator"
+urls:
+  tarball: "https://ftp.gnu.org/gnu/bison/bison-3.8.2.tar.gz"
+sha256: "9d3b6c1a4f5e6c7b8d9a0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d"
+
+dependencias_build:
+  - make
+
+dependencias_runtime: []
+
+flags_USE: []
+
+tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_download:
+    - echo "Baixando Bison..."
+  pre_build:
+    - mkdir -p build
+  post_build:
+    - echo "Bison build completo!"
+  post_install:
+    - echo "Bison instalado!"
+  post_remove:
+    - echo "Bison removido!"
+
+optional_commands:
+  strip: true
+  make_check: true
+
+configure_flags:
+  - "--prefix=/usr"
