@@ -5,7 +5,10 @@ urls:
   tarball: "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.5.tar.xz"
 sha256: "<sha256-linux>"
 
-dependencias_build: []
+dependencias_build:
+  - make
+  - gcc
+
 dependencias_runtime: []
 
 tipo_build: none
@@ -14,7 +17,12 @@ sandbox: true
 hooks:
   pre_build:
     - mkdir -p build
+    - cd build
+    - tar -xf ../linux-6.5.tar.xz
+    - cd linux-6.5
   post_build:
-    - echo "Linux headers preparados!"
+    - make mrproper
+    - make headers_check
+    - make INSTALL_HDR_PATH=/sandbox/usr headers_install
   post_install:
-    - echo "Headers instalados!"
+    - echo "Linux headers instalados no sandbox!"
