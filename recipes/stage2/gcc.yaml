@@ -1,0 +1,26 @@
+nome: gcc
+versao: 13.2.0
+descricao: "GNU Compiler Collection completo"
+dependencias_build:
+  - gcc-bootstrap
+  - gmp
+  - mpfr
+  - mpc
+  - isl
+  - flex
+  - bison
+dependencias_runtime:
+  - glibc
+flags_USE:
+  - c++
+  - fortran
+  - objc
+sandbox: true
+tipo_build: autotools
+configure_flags:
+  - "--prefix=/usr"
+  - "--enable-languages=c,c++,fortran,objc"
+  - "--disable-multilib"
+optional_commands:
+  make_check: true
+  strip: true
