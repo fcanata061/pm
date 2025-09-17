@@ -1,0 +1,34 @@
+nome: isl
+versao: 0.26
+descricao: "Integer Set Library"
+urls:
+  tarball: "http://isl.gforge.inria.fr/isl-0.26.tar.xz"
+sha256: "<sha256-isl>"
+
+dependencias_build:
+  - gmp
+  - make
+  - m4
+
+dependencias_runtime:
+  - gmp
+
+tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_build:
+    - mkdir -p build
+    - cd build
+    - tar -xf ../isl-0.26.tar.xz
+    - mv -v ../isl-0.26 ../isl
+  post_build:
+    - echo "ISL build completo!"
+  post_install:
+    - echo "ISL instalado!"
+  post_remove:
+    - echo "ISL removido!"
+
+configure_flags:
+  - "--prefix=/tools"
+  - "--with-gmp=/tools"
