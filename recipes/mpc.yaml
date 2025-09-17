@@ -1,0 +1,42 @@
+nome: mpc
+versao: 1.3.1
+descricao: "GNU MPC Library - Complex numbers arithmetic"
+urls:
+  tarball: "https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz"
+sha256: "8e4a8c4c6a3f6e2e6b7a1d8e6b8c4c9f7d1e2f6a8b4e2f1d3a6e4b8c7a1d2f3e"
+
+dependencias_build:
+  - gmp
+  - mpfr
+  - make
+  - m4
+
+dependencias_runtime:
+  - gmp
+  - mpfr
+
+flags_USE: []
+
+tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_download:
+    - echo "Baixando MPC..."
+  pre_build:
+    - mkdir -p build
+  post_build:
+    - echo "MPC build completo!"
+  post_install:
+    - echo "MPC instalado!"
+  post_remove:
+    - echo "MPC removido!"
+
+optional_commands:
+  strip: true
+  make_check: true
+
+configure_flags:
+  - "--prefix=/usr"
+  - "--with-gmp=/usr"
+  - "--with-mpfr=/usr"
