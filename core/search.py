@@ -1,16 +1,32 @@
-from core import database
+from core import database, logger
 
-def run(query):
-    installed = database.list_installed()
-    # simulação: match simples
-    for pkg in ["gcc", "glibc", "firefox"]:
-        mark = "[✓]" if pkg in installed else "[ ]"
-        if query in pkg:
-            print(f"{mark} {pkg}")
+def search(query: str = "", group: str = None):
+    """
+    Busca pacotes pelo nome ou grupo.
+    :param query: string a buscar
+    :param group: nome do grupo para filtrar
+    """
+    results = []
 
-def info(pkg):
-    recipe = database.get_recipe(pkg)
-    if recipe:
-        print(f"Nome: {recipe['nome']}")
-        print(f"Versão: {recipe['versao']}")
-        print(f"Descrição: {recipe['descricao']}")
+    # Buscar todos os pacotes disponíveis
+    if group:
+        pkgs = database.get_group_packages(group)
+    else:
+        pkgs = database.get_all_packages()
+
+    for pkg in pkgs:
+        name = pkg.get("nome")
+        version = pkg.get("versao", "N/A")
+        desc = pkg.get("descricao", "")
+        installed = database.is_installed(name)
+        mark = "[✔]" if installed else "[ ]"
+
+        if query.lower() in name.lower():
+            results.append(f"{mark} {name}-{version}: {desc}")
+
+    if results:
+        logger.info("🔍 Resultados da busca:")
+        for r in results:
+            print(r)
+    else:
+        logger.warn("Nenhum pacote encontrado para sua busca.")
