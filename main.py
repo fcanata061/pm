@@ -61,6 +61,10 @@ def main():
     p_dep = sub.add_parser("dep", aliases=["d"], help="Mostra ordem de build topológica")
     p_dep.add_argument("packages", nargs="+", help="Pacotes para ordenação")
 
+    # ----------------- CHROOT -----------------
+    p_chroot = sub.add_parser("chroot", help="Gerencia ambientes chroot")
+    p_chroot.add_argument("diretorios", nargs="+", help="Diretórios dos chroots")
+
     args = parser.parse_args()
 
     if args.cmd in ["install","i"]:
@@ -110,6 +114,10 @@ def main():
     elif args.cmd in ["dep","d"]:
         order = dependency.topological_sort(args.packages)
         print("Ordem de build:", order)
+
+    elif args.cmd == "chroot":
+        from modules.chroot_manager import gerenciar_chroots
+        gerenciar_chroots(args.diretorios)
 
     else:
         parser.print_help()
