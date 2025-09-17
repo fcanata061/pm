@@ -2,7 +2,7 @@
 import argparse
 from core import (
     install, remove, build, search, groups, hooks, dependency,
-    updater, version_tracker, recipe_sync, logger
+    updater, version_tracker, recipe_sync, logger, chroot
 )
 
 def main():
