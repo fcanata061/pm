@@ -1,16 +1,16 @@
 # =====================================================================
-# CONFIGURAÇÃO DO GERENCIADOR PM
+# CONFIGURAÇÃO FINAL DO GERENCIADOR PM
 # =====================================================================
 
 # Diretórios principais
-sandbox_path: /tmp/pm_sandbox       # Diretório temporário para builds em sandbox/fakeroot
-db_path: ~/pm/db                    # Banco de dados dos pacotes instalados
-log_path: ~/pm/logs                 # Logs de builds, installs, removes
+sandbox_path: /tmp/pm_sandbox        # Diretório temporário para builds em sandbox/fakeroot
+db_path: ~/pm/db                     # Banco de dados dos pacotes instalados
+log_path: ~/pm/logs                  # Logs de builds, installs, removes
 default_prefix: /usr/local           # Diretório padrão de instalação
 
 # Build
-parallel_build: 4                   # Número de jobs paralelos durante compilação
-auto_update_flags_use: true         # Aplica automaticamente alterações nas flags USE
+parallel_build: 4                     # Número de jobs paralelos durante compilação
+auto_update_flags_use: true           # Aplica automaticamente alterações nas flags USE
 
 # Grupos de pacotes
 groups:
@@ -21,10 +21,10 @@ groups:
 
 # Version Tracker
 version_tracker:
-  check_interval_days: 7            # Verifica novas versões a cada X dias
-  auto_update: false                # Atualiza automaticamente programas seguros
-  notify_critical: true             # Apenas avisa sobre novas versões de programas críticos
-  critical_programs:                # Programas críticos que não devem atualizar automaticamente
+  check_interval_days: 7             # Verifica novas versões a cada X dias
+  auto_update: false                 # Atualiza automaticamente programas seguros
+  notify_critical: true              # Apenas avisa sobre novas versões de programas críticos
+  critical_programs:                 # Programas críticos que não devem atualizar automaticamente
     - gcc
     - glibc
     - kernel
@@ -32,17 +32,17 @@ version_tracker:
 
 # Logs e banco de dados
 logger:
-  level: info                       # Níveis: debug, info, warning, error
-  color: true                       # Logs coloridos no terminal
-  animation: true                   # Mostra animações de progresso
-  persist_db: true                  # Mantém banco de dados atualizado após cada operação
+  level: info                        # Níveis: debug, info, warning, error
+  color: true                        # Logs coloridos no terminal
+  animation: true                     # Mostra animações de progresso
+  persist_db: true                   # Mantém banco de dados atualizado após cada operação
 
 # Sandbox/Fakeroot
 sandbox:
-  enable: true                      # Ativa builds em sandbox
+  enable: true                       # Ativa builds em sandbox
   permissions:
-    user: 1000                      # UID do usuário sandbox
-    group: 1000                     # GID do grupo sandbox
+    user: 1000                        # UID do usuário sandbox
+    group: 1000                       # GID do grupo sandbox
   temp_dirs: [build, download, extract, install]  # Subdiretórios criados no sandbox
 
 # Flags USE globais
@@ -58,9 +58,24 @@ hooks:
   pre_build: []
   post_build: []
   post_install: []
+  pre_remove: []
   post_remove: []
 
 # Optional commands padrão
 optional_commands:
   make_check: true
   strip: true
+
+# Patches globais (aplicável a todas as receitas)
+patches: []
+
+# Suporte a binários
+binary_install:
+  enable: true                       # Ativa suporte a instalação de binários
+  default_dir: /usr/local/bin        # Diretório padrão para binários
+  per_program_dir: true               # Cria subdiretório para cada programa
+
+# ETC update
+etc_update:
+  enable: true                        # Permite atualizar arquivos de configuração do sistema
+  backup: true                         # Faz backup antes de aplicar merge automático
