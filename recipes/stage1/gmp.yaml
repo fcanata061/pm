@@ -1,0 +1,35 @@
+nome: gmp
+versao: 6.3.0
+descricao: "GNU Multiple Precision Arithmetic Library"
+urls:
+  tarball: "https://gmplib.org/download/gmp/gmp-6.3.0.tar.xz"
+sha256: "<sha256-gmp>"
+
+dependencias_build:
+  - make
+  - m4
+
+dependencias_runtime: []
+
+tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_build:
+    - mkdir -p build
+    - cd build
+    - tar -xf ../gmp-6.3.0.tar.xz
+    - mv - v ../gmp-6.3.0 gmp/
+  post_build:
+    - echo "GMP build completo!"
+  post_install:
+    - echo "GMP instalado!"
+  post_remove:
+    - echo "GMP removido!"
+
+optional_commands:
+  strip: true
+  make_check: true
+
+configure_flags:
+  - "--prefix=/tools"
