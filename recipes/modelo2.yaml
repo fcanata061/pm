@@ -1,0 +1,53 @@
+nome: <nome-do-pacote>
+versao: <versao-do-pacote>
+descricao: "<descrição do pacote>"
+urls:
+  tarball: "<link-para-tarball>"
+  git: "<link-para-repositório-git>"   # opcional
+sha256: "<sha256-do-tarball>"          # integridade
+
+# ----------------- DEPENDÊNCIAS -----------------
+dependencias_build:       # Necessárias apenas para compilar
+  - <pacote1>
+  - <pacote2>
+dependencias_runtime:     # Necessárias para rodar
+  - <pacote1>
+  - <pacote2>
+
+# ----------------- FLAGS USE -----------------
+flags_USE:                # Recursos opcionais que ativam dependências adicionais
+  - <flag1>
+  - <flag2>
+
+dependencias_opcionais:   # Dependências adicionais quando flags USE são ativadas
+  <flag1>:
+    - <pacoteX>
+  <flag2>:
+    - <pacoteY>
+
+# ----------------- TIPO DE BUILD -----------------
+tipo_build: <autotools|mozconfig|cmake|custom> 
+
+# ----------------- HOOKS -----------------
+hooks:
+  pre_download:           # Comandos executados antes de baixar o pacote
+    - <comando>
+  pre_build:              # Comandos executados antes do build
+    - <comando>
+  post_build:             # Comandos executados depois do build
+    - <comando>
+  post_install:           # Comandos executados depois da instalação
+    - <comando>
+  post_remove:            # Comandos executados depois da remoção
+    - <comando>
+
+# ----------------- COMANDOS OPCIONAIS -----------------
+optional_commands:
+  strip: true             # Se deve rodar strip no binário
+  make_check: true        # Se deve rodar make check/testes após build
+  autotools: true         # Automatiza ./configure, make, make install
+  python: true            # Automatiza build para pacotes Python
+  rust: true              # Automatiza build para pacotes Rust
+
+# ----------------- CONFIGURAÇÕES ADICIONAIS -----------------
+sandbox: true            # Se deve usar sandbox/fakeroot
