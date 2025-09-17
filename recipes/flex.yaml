@@ -1,0 +1,35 @@
+nome: flex
+versao: 2.6.4
+descricao: "Fast lexical analyzer generator"
+urls:
+  tarball: "https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz"
+sha256: "7d4b6d9a1c2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9"
+
+dependencias_build:
+  - make
+
+dependencias_runtime: []
+
+flags_USE: []
+
+tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_download:
+    - echo "Baixando Flex..."
+  pre_build:
+    - mkdir -p build
+  post_build:
+    - echo "Flex build completo!"
+  post_install:
+    - echo "Flex instalado!"
+  post_remove:
+    - echo "Flex removido!"
+
+optional_commands:
+  strip: true
+  make_check: true
+
+configure_flags:
+  - "--prefix=/usr"
