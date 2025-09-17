@@ -1,0 +1,226 @@
+# Verifica novas versões de todos os programas instalados
+pm version check
+
+# Verifica apenas para um programa específico
+pm version check firefox
+
+# Atualiza automaticamente programas seguros (se auto_update = true)
+pm version update
+
+# Lista histórico de versões dos programas
+pm version history
+
+# Marca um programa como crítico (não atualizar automaticamente)
+pm version set-critical gcc
+
+================================================================================
+                             GERENCIADOR DE PROGRAMAS PM
+================================================================================
+
+1. INTRODUÇÃO
+-------------
+O PM é um gerenciador de programas inspirado no Portage do Gentoo,
+desenvolvido para:
+- Build de softwares em sandbox/fakeroot
+- Resolução de dependências topológica
+- Hooks de pré e pós build/install/remove
+- Logs, banco de dados e version tracking
+- Instalação de programas ou grupos completos
+- Atualização automática de programas
+- Suporte a flags USE, build opcional, strip, make_check
+
+---
+
+2. INSTALAÇÃO DO PM
+------------------
+Pré-requisitos:
+- Python 3.x
+- Git
+- Make, GCC (para compilação inicial)
+- Ferramentas de rede (wget/curl)
+
+Passos:
+1. Clonar repositório do PM:
+   git clone <repo-do-pm> ~/pm
+2. Entrar na pasta:
+   cd ~/pm
+3. Tornar executável (opcional):
+   chmod +x pm.py
+4. Adicionar ao PATH (opcional):
+   export PATH=$PATH:~/pm
+
+---
+
+3. ESTRUTURA DE DIRETÓRIOS
+--------------------------
+pm/
+├─ recipes/            # Receitas de programas
+│  ├─ gcc.yaml
+│  ├─ firefox.yaml
+│  └─ glibc.yaml
+├─ modules/            # Funções separadas
+│  ├─ build.py
+│  ├─ install.py
+│  ├─ remove.py
+│  ├─ sandbox.py
+│  ├─ dependency.py
+│  ├─ hooks.py
+│  ├─ groups.py
+│  ├─ updater.py
+│  ├─ search.py
+│  ├─ logger.py
+│  └─ version_tracker.py
+├─ logs/               # Logs das construções
+├─ db/                 # Banco de dados de pacotes instalados
+├─ sandbox/            # Diretórios temporários para build
+├─ main.py             # CLI principal
+└─ config.yaml         # Configurações do PM
+
+---
+
+4. CONFIGURAÇÃO
+---------------
+Exemplo de config.yaml:
+
+sandbox_path: /tmp/pm_sandbox
+db_path: ~/pm/db
+log_path: ~/pm/logs
+default_prefix: /usr/local
+parallel_build: 4
+auto_update_flags_use: true
+groups:
+  base: [gcc, binutils, glibc, coreutils]
+  xorg: [xorg-server, libX11, mesa]
+  dev: [vim, git, python3]
+
+---
+
+5. COMANDOS PRINCIPAIS
+----------------------
+
+pm install <programa>       # Instala um programa
+pm build <programa>         # Compila sem instalar
+pm remove <programa>        # Remove programa e órfãos
+pm update <programa|group>  # Atualiza programa ou grupo
+pm rebuild <programa|all>   # Recompila programa ou sistema inteiro
+pm search <termo>           # Busca programa e mostra instalado [✔]
+pm info <programa>          # Informações detalhadas do programa
+pm revdep                   # Verifica dependências quebradas e corrige
+pm sync                      # Sincroniza repositórios de receitas
+pm groups list               # Lista grupos disponíveis
+pm groups install <grupo>    # Instala grupo de programas
+pm logs tail <programa>      # Mostra log em tempo real (tail -f)
+pm flags use <programa>      # Modifica flags USE de um programa
+
+---
+
+6. FLAGS USE
+-------------
+- Flags USE definem opções de compilação do programa.
+- Exemplo: ffmpeg enable → habilita suporte a mp3.
+- O PM resolve dependências adicionais automaticamente.
+
+---
+
+7. HOOKS
+--------
+- pre_download, pre_build, post_build, post_install, post_remove
+- Permitem executar comandos antes/depois de cada etapa.
+- Podem ser scripts externos ou comandos diretos no YAML da receita.
+
+---
+
+8. SANDBOX
+----------
+- Cada build ocorre em sandbox/fakeroot para proteger o sistema.
+- Diretórios temporários são criados automaticamente em config.yaml:sandbox_path
+- Permissões corretas são configuradas automaticamente.
+
+---
+
+9. LOGGER & DB
+--------------
+- Todos os builds, installs, removes e updates são registrados.
+- Logs separados por programa em logs/<programa>.log
+- Banco de dados mantém histórico de versões instaladas, flags USE e grupos.
+
+---
+
+10. VERSION TRACKER
+------------------
+- Checa automaticamente novas versões dos programas.
+- Pode ser configurado para avisar sobre programas críticos ou atualizar automaticamente programas seguros.
+- Integração completa com pm update.
+
+---
+
+11. BUILD E INSTALAÇÃO
+----------------------
+- Build suporta:
+  - make_check
+  - strip de binários
+  - paralelismo configurável
+  - download de tarballs ou git/hg
+- Comando `pm build <programa>`:
+  1. Baixa fontes e aplica SHA256 check
+  2. Extrai e aplica patches
+  3. Executa pre_build hooks
+  4. Compila no sandbox
+  5. Executa post_build hooks
+- Comando `pm install <programa>` instala no prefix configurado
+
+---
+
+12. REMOÇÃO E ORFÃOS
+-------------------
+- `pm remove <programa>` remove o programa e suas dependências órfãs.
+- Hooks de pós remove são executados.
+- Dependências compartilhadas não são removidas se ainda usadas.
+
+---
+
+13. GRUPOS
+-----------
+- `pm groups install base` → instala todos os programas do grupo "base".
+- `pm groups list` → lista todos os grupos definidos.
+- Facilita instalação inicial do sistema e atualização coletiva.
+
+---
+
+14. EXEMPLOS DE USO
+-------------------
+# Instalar GCC completo
+pm install gcc
+
+# Construir Firefox sem instalar
+pm build firefox
+
+# Recompilar todo o sistema
+pm rebuild all
+
+# Atualizar apenas o grupo base
+pm update base
+
+# Ver logs do Firefox
+pm logs tail firefox
+
+# Buscar programas instalados
+pm search python3
+
+# Mostrar informações detalhadas de um programa
+pm info glibc
+
+---
+
+15. CONCLUSÃO
+-------------
+O PM oferece:
+- Build seguro em sandbox
+- Resolução automática de dependências
+- Hooks e logs detalhados
+- Version tracking
+- Suporte a grupos e flags USE
+- Comandos abreviados na CLI
+- Total controle sobre instalação e atualização de pacotes
+
+================================================================================
