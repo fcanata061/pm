@@ -1,0 +1,22 @@
+nome: glibc
+versao: 2.40
+descricao: "GNU C Library"
+urls:
+  tarball: "https://ftp.gnu.org/gnu/libc/glibc-2.40.tar.xz"
+sha256: "<sha256-glibc>"
+
+dependencias_build:
+  - gcc
+  - make
+  - linux-headers
+
+dependencias_runtime:
+  - libc6
+
+sandbox: true
+tipo_build: autotools
+hooks:
+  pre_build:
+    - mkdir -p build
+  post_build:
+    - echo "Glibc compilada!"
