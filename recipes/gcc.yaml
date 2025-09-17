@@ -1,0 +1,59 @@
+nome: gcc
+versao: 13.2.0
+descricao: "GNU Compiler Collection - compilador C/C++/Fortran/ObjC"
+urls:
+  tarball: "https://ftp.gnu.org/gnu/gcc/gcc-13.2.0/gcc-13.2.0.tar.xz"
+  git: "https://gcc.gnu.org/git/gcc.git"
+sha256: "43e95b7d78f1d3a5a0f9153eafc2340c28b7a7fdf9f543b1b4b403eac0a1d2c3"
+
+dependencias_build:
+  - gmp
+  - mpfr
+  - mpc
+  - isl
+  - flex
+  - bison
+  - make
+  - python3
+
+dependencias_runtime:
+  - glibc
+  - libstdc++
+
+flags_USE:
+  - c++
+  - fortran
+  - objc
+
+dependencias_opcionais:
+  c++:
+    - libstdc++-dev
+  fortran:
+    - gfortran-runtime
+  objc:
+    - libobjc
+
+tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_download:
+    - echo "🔽 Iniciando download do GCC..."
+  pre_build:
+    - echo "⚙ Preparando sandbox e diretório de build..."
+    - mkdir -p build
+  post_build:
+    - echo "✅ Build concluído com sucesso!"
+  post_install:
+    - echo "🚀 GCC instalado com sucesso!"
+  post_remove:
+    - echo "🗑 GCC removido do sistema."
+
+optional_commands:
+  strip: true
+  make_check: true
+
+configure_flags:
+  - "--prefix=/usr"
+  - "--enable-languages=c,c++,fortran,objc"
+  - "--disable-multilib"
