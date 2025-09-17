@@ -1,0 +1,39 @@
+nome: firefox
+versao: 118.0
+descricao: "Mozilla Firefox web browser"
+
+urls:
+  tarball: "https://archive.mozilla.org/pub/firefox/releases/118.0/source/firefox-118.0.source.tar.xz"
+  git: "https://hg.mozilla.org/mozilla-central"
+
+sha256: "<sha256-do-tarball>"
+
+dependencias_build:
+  - autoconf2.13
+  - clang
+  - rust
+  - python3
+  - nodejs
+  - cbindgen
+  - pkg-config
+
+dependencias_runtime:
+  - gtk3
+  - libXt
+  - libevent
+  - zlib
+  - alsa-lib
+  - ffmpeg
+
+flags_USE:
+  - pulseaudio
+  - system-icu
+  - ffmpeg
+
+tipo_build: mozconfig/autotools
+
+hooks:
+  pre_download: []
+  pre_build: []
+  post_build: []
+  post_install: []
