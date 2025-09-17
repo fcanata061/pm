@@ -1,0 +1,37 @@
+nome: mpc
+versao: 1.3.1
+descricao: "GNU MPC Library"
+urls:
+  tarball: "https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz"
+sha256: "<sha256-mpc>"
+
+dependencias_build:
+  - gmp
+  - mpfr
+  - make
+  - m4
+
+dependencias_runtime:
+  - gmp
+  - mpfr
+
+tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_build:
+    - mkdir -p build
+    - cd build
+    - tar -xf ../mpc-1.3.1.tar.gz
+    - mv -v ../mpc-1.3.1 ../mpc
+  post_build:
+    - echo "MPC build completo!"
+  post_install:
+    - echo "MPC instalado!"
+  post_remove:
+    - echo "MPC removido!"
+
+configure_flags:
+  - "--prefix=/tools"
+  - "--with-gmp=/tools"
+  - "--with-mpfr=/tools"
