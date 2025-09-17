@@ -1,0 +1,20 @@
+nome: binutils
+versao: 2.42
+descricao: "GNU Binutils - assembler, linker, objdump"
+urls:
+  tarball: "https://ftp.gnu.org/gnu/binutils/binutils-2.42.tar.xz"
+sha256: "<sha256-binutils>"
+
+dependencias_build:
+  - make
+
+dependencias_runtime: []
+
+tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_build:
+    - mkdir -p build
+  post_build:
+    - echo "Binutils build concluído!"
