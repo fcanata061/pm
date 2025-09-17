@@ -1,26 +1,60 @@
 nome: gcc
 versao: 13.2.0
-descricao: "GNU Compiler Collection completo"
+descricao: "GNU Compiler Collection completo (C, C++, Fortran, ObjC)"
+urls:
+  tarball: "https://ftp.gnu.org/gnu/gcc/gcc-13.2.0/gcc-13.2.0.tar.xz"
+sha256: "43e95b7d78f1d3a5a0f9153eafc2340c28b7a7fdf9f543b1b4b403eac0a1d2c3"
+
 dependencias_build:
-  - gcc-bootstrap
   - gmp
   - mpfr
   - mpc
   - isl
   - flex
   - bison
+  - make
+  - python3
+
 dependencias_runtime:
   - glibc
+  - libstdc++
+
 flags_USE:
   - c++
   - fortran
   - objc
-sandbox: true
+
 tipo_build: autotools
+sandbox: true
+
+hooks:
+  pre_download:
+    - echo "🔽 Baixando GCC e dependências..."
+  pre_build:
+    - echo "⚙ Preparando sandbox e diretório de build..."
+    - mkdir -p build
+    - cd build
+    # Extrair e renomear dependências
+    - tar -xf ../mpfr-4.2.2.tar.xz
+    - mv -v mpfr-4.2.2 mpfr
+    - tar -xf ../gmp-6.3.0.tar.xz
+    - mv -v gmp-6.3.0 gmp
+    - tar -xf ../mpc-1.3.1.tar.gz
+    - mv -v mpc-1.3.1 mpc
+    - tar -xf ../isl-0.26.tar.xz
+    - mv -v isl-0.26 isl
+  post_build:
+    - echo "✅ GCC build concluído!"
+  post_install:
+    - echo "🚀 GCC instalado com sucesso!"
+  post_remove:
+    - echo "🗑 GCC removido do sistema."
+
+optional_commands:
+  strip: true
+  make_check: true
+
 configure_flags:
   - "--prefix=/usr"
   - "--enable-languages=c,c++,fortran,objc"
   - "--disable-multilib"
-optional_commands:
-  make_check: true
-  strip: true
