@@ -1,47 +1,71 @@
-from core import database, sandbox, logger, hooks, dependency
+import os
+import shutil
+import subprocess
+import tempfile
+from core import database, logger, hooks, dependency, utils
 
-def install(pkg):
-    logger.info(f"Instalando {pkg}...")
-    recipe = database.get_recipe(pkg)
-    if not recipe:
-        logger.warn(f"Receita de {pkg} não encontrada!")
-        return
+def build(recipe: dict, sandbox_dir: str = "/tmp/pm_sandbox", rebuild=False, parallel_jobs: int = 4):
+    """
+    Constrói um pacote dentro de um sandbox.
+    """
 
-    deps = recipe.get("dependencias_build", []) + recipe.get("dependencias_runtime", [])
-    ordered = dependency.topological_sort(deps + [pkg])
-    logger.debug(f"Ordem de instalação: {ordered}")
+    nome = recipe["nome"]
+    versao = recipe["versao"]
+    logger.info(f"⚙️  Iniciando build de {nome}-{versao}")
 
-    for p in ordered:
-        rec = database.get_recipe(p)
-        if not rec:
-            logger.warn(f"Receita de {p} não encontrada! Pulando...")
-            continue
-        sandbox.run_build(rec)
-        database.add(p)
+    # --- 1. Criar sandbox ---
+    workdir = tempfile.mkdtemp(prefix=f"{nome}-build-", dir=sandbox_dir)
+    logger.debug(f"📂 Sandbox criada em {workdir}")
 
-def remove(pkg):
-    logger.warn(f"Removendo {pkg}...")
-    hooks.run("pre_remove", pkg)
-    database.remove(pkg)
-    hooks.run("post_remove", pkg)
+    # --- 2. Hooks pré-build ---
+    for cmd in recipe.get("hooks", {}).get("pre_build", []):
+        logger.info(f"🔧 Executando hook pre_build: {cmd}")
+        subprocess.run(cmd, shell=True, check=True, cwd=workdir)
 
-def rebuild_system():
-    logger.info("Reconstruindo todo o sistema (@world)...")
-    world = database.list_installed()
-    ordered = dependency.topological_sort(world)
-    logger.debug(f"Ordem de compilação: {ordered}")
-    for pkg in ordered:
-        rebuild_package(pkg)
+    # --- 3. Download e extração ---
+    tarball = recipe.get("urls", {}).get("tarball")
+    if tarball:
+        utils.download_and_extract(tarball, workdir)
 
-def rebuild_package(pkg):
-    logger.info(f"Recompilando {pkg}...")
-    recipe = database.get_recipe(pkg)
-    if recipe:
-        sandbox.run_build(recipe, rebuild=True)
-        database.add(pkg)
+    # --- 4. Aplicar patches se houver ---
+    for patch in recipe.get("patches", []):
+        patch_path = utils.find_patch(patch)
+        if patch_path:
+            logger.info(f"📌 Aplicando patch {patch}")
+            subprocess.run(f"patch -p1 < {patch_path}", shell=True, cwd=workdir, check=True)
 
-def remove_orphans():
-    logger.info("Removendo pacotes órfãos...")
-    orphans = database.find_orphans()
-    for pkg in orphans:
-        remove(pkg)
+    # --- 5. Configuração / geração de arquivos build ---
+    tipo_build = recipe.get("tipo_build", "autotools")
+    if tipo_build == "mozconfig":
+        mozconfig_content = utils.generate_mozconfig(recipe)
+        with open(os.path.join(workdir, "mozconfig"), "w") as f:
+            f.write(mozconfig_content)
+    elif tipo_build == "autotools":
+        configure_cmd = "./configure"
+        logger.info(f"⚙️  Configurando com {configure_cmd}")
+        subprocess.run(configure_cmd, shell=True, cwd=workdir, check=True)
+
+    # --- 6. Compilação ---
+    make_cmd = f"make -j{parallel_jobs}"
+    logger.info(f"🏗 Compilando {nome} com '{make_cmd}'")
+    subprocess.run(make_cmd, shell=True, cwd=workdir, check=True)
+
+    # --- 7. Hooks pós-build ---
+    for cmd in recipe.get("hooks", {}).get("post_build", []):
+        logger.info(f"🔧 Executando hook post_build: {cmd}")
+        subprocess.run(cmd, shell=True, check=True, cwd=workdir)
+
+    # --- 8. Instalação dentro do sandbox (DESTDIR) ---
+    destdir = recipe.get("destdir", "/")  # pode ser sandbox para testes
+    logger.info(f"📥 Instalando temporariamente em {destdir}")
+    subprocess.run(f"make install DESTDIR={destdir}", shell=True, cwd=workdir, check=True)
+
+    # --- 9. Registrar no database ---
+    if not rebuild:
+        database.add_package(recipe)
+        logger.success(f"✅ Pacote {nome}-{versao} registrado no database")
+
+    # --- 10. Limpeza ---
+    if recipe.get("clean_after_build", True):
+        shutil.rmtree(workdir)
+        logger.debug(f"🧹 Sandbox {workdir} removida")
