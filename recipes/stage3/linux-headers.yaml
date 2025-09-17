@@ -1,0 +1,20 @@
+nome: linux-headers
+versao: 6.5
+descricao: "Linux kernel headers para compilação do sistema"
+urls:
+  tarball: "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.5.tar.xz"
+sha256: "<sha256-linux>"
+
+dependencias_build: []
+dependencias_runtime: []
+
+tipo_build: none
+sandbox: true
+
+hooks:
+  pre_build:
+    - mkdir -p build
+  post_build:
+    - echo "Linux headers preparados!"
+  post_install:
+    - echo "Headers instalados!"
